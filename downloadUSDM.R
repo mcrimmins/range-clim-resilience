@@ -2,8 +2,8 @@
 # MAC 6/19/18
 
 #Set years
-yr1<-2000
-yr2<-2018
+yr1<-2023
+yr2<-2023
 
 # set directories - only needed for CyVerse instances
 dir.create("./tmpFiles")
@@ -14,9 +14,9 @@ for(i in yr1:yr2){
   # temporarily download year files and then delete
   # download test files; changed to "wget" from "curl"
   print("Downloading Yearly USDM Files")
-  download.file(paste0("http://droughtmonitor.unl.edu/data/shapefiles_m//",i,"_USDM_M.zip"), destfile = "./tmpFiles/USDM.zip", method="curl")
+  download.file(paste0("https://droughtmonitor.unl.edu/data/shapefiles_m/",i,"_USDM_M.zip"), destfile = "./tmpFiles/USDM.zip", method="curl")
   print("Done downloading, extracting files")
-  unzip("./tmpFiles/USDM.zip", exdir = "/scratch/crimmins/USDM/files")
+  unzip("./tmpFiles/USDM.zip", exdir = "/scratch/crimmins/USDM/files",overwrite = TRUE)
   print("Done downloading, extracting files")
   do.call(file.remove, list(list.files("./tmpFiles", full.names = TRUE)))
 } 
@@ -56,8 +56,12 @@ for(i in 1:nrow(fileNames)){
   do.call(file.remove, list(list.files("./tmpFiles", full.names = TRUE)))
 }
 
+# set names and writeRaster
+names(tempGrid2)<-fileNames$date
+writeRaster(tempGrid2, filename = "USDMRaster_2000_2023_16km.grd", overwrite=TRUE)
+
 # save datafiles
-save(fileNames, tempGrid2, file = "USDMRaster_2001_2018_16km.RData")
+save(fileNames, tempGrid2, file = "USDMRaster_2000_2023_16km.RData")
 
 names(tempGrid2)<-fileNames$date
 
@@ -65,7 +69,7 @@ names(tempGrid2)<-fileNames$date
 #writeRaster(tempGrid2,filename="USDM2001_2018.grd")
 
 # Analyze/Map Data (problem with rasterized maps 2000-2004)
-load("USDMRaster_2001_2018_16km.RData")
+load("USDMRaster_2000_2019_16km.RData")
 library(rasterVis)
 library(RColorBrewer)
 
